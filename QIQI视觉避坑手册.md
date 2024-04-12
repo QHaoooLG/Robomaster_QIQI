@@ -172,6 +172,7 @@ ros2 run	//该命令执行的是install文件夹中的文件，故需要更新�
 ---
 
 ## 君佬部署自瞄代码-流程剖析
+##### 全过程基于foxglove实现
 
 - 君佬部署自瞄直播回放
    https://flowus.cn/lihanchen/share/8e866082-3758-447d-a034-aa1ab813a417
@@ -181,6 +182,38 @@ ros2 run	//该命令执行的是install文件夹中的文件，故需要更新�
    lsusb
   ```
 
+- 安装温度传感器查看主板及其连接设备的温度
+  ```shell
+  sudo apt install lm-sensors
+  sensors
+  ```
+
+- 计算`src/rm_vision_main/rm_vision_bringup/config/laungh_params.yaml`中的`r_xyz_factor`:
+  观察`/tracker/measurement.x`的Plot图，得出x的范围值，如$[-1.88, -1.96]$，
+  取差值$0.08，$
+  $0.08/4=0.02，$
+  $0.02^2=0.0004=4e-4，$
+  $0.0004/1.88=2e-4量级 $
+
+- 海康相机限帧率？
+
+- 相机标定后，foxglove中观测`/detector/armors`中的数据，`/armors[]/pose[]/position`中的`norm`数据与相机到装甲板识别中心距离理应基本相等，单位(m)
+  "5m内相差0.2m稳态误差大概为 $0.2/5=0.04$，略偏大，尽量控制在 2% 左右，相机FOV小(镜头焦距大)的情况下，稳态误差越大影响越大"
+
+- ubuntu系统之间通过wifi直接终端传输文件，
+  ```shell
+  scp <document_name> <ubuntu_hostname>@<ubuntu_ip>:~/
+  ```
+   `document_name`为文件名，带后缀
+   `ubuntu_hostname`为ubuntu系统用户名
+   `ubuntu_ip`可在ubuntu系统联网后，在终端输入
+   ```shell
+   ifconfig
+   ```
+   来进行查看
+   `~/`表示传输到目标ubuntu系统的主目录下
+
+- 撒的
 
 ---
 
