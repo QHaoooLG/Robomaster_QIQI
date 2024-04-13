@@ -191,13 +191,15 @@ ros2 run	//该命令执行的是install文件夹中的文件，故需要更新�
 - 计算`src/rm_vision_main/rm_vision_bringup/config/laungh_params.yaml`中的`r_xyz_factor`:
   观察`/tracker/measurement.x`的Plot图，得出x的范围值，如$[-1.88, -1.96]$，
   取差值$0.08$，
-  $0.08/4=0.02$，
-  $0.02^2=0.0004=4e-4$，
-  $0.0004/1.88=2e-4量级 $
+  $0.08/4=0.02$，取x轴差值除以4
+  $0.02^2=0.0004=4e-4$，将除后结果取平方
+  $0.0004/1.88=2e-4量级 $  平方结果再去比x轴范围值中的最小值，最后取结果的量级
+  $2e-4$ 即 $2*10^-4$
 
 - 海康相机限帧率？
 
-- 相机标定后，foxglove中观测`/detector/armors`中的数据，`/armors[]/pose[]/position`中的`norm`数据与相机到装甲板识别中心距离理应基本相等，单位(m)
+- 相机标定稳定性评价标准
+  相机标定后，foxglove中观测`/detector/armors`中的数据，`/armors[]/pose[]/position`中的`norm`数据与相机到装甲板识别中心距离理应基本相等，单位(m)
   "5m内相差0.2m稳态误差大概为 $0.2/5=0.04$，略偏大，尽量控制在 2% 左右，相机FOV小(镜头焦距大)的情况下，稳态误差越大影响越大"
 
 - ubuntu系统之间通过wifi直接终端传输文件，
@@ -231,8 +233,26 @@ ros2 run	//该命令执行的是install文件夹中的文件，故需要更新�
   `<origin xyz="" rpy="" />`中，`rpy`均为弧度制，需要量出角度后转弧度制，`xyz`单位为(m)
   > tip: 机械/电控量出真实值前，可以先放入期望值进行初步调试，看发弹、识别、坐标解算和跟随等基本功能是否呈现正常趋势
 
+- 参数剖析：
+  坐标系转换、相机标定没问题后，识别跟随小陀螺时，`/tracker/measurements`和`/tracker/target -> position/xyz`应该是目标装甲板在世界坐标系中的数据
+  `radius_2`为固定时间段内取某一时刻记录下`radius_1`的值
+  `/tracker/target -> velocity`
 
-  -----RECORD VIDEO 1 -> 1:55:00 -----
+
+- 步兵自瞄调参流程
+  1. 更换相机参数文件，每个相机的参数都需要通过标定获得，具体评价标准往上找
+  2. 根据相机的实际安装位置，更改`/src/rm_vision/rm_vision_bringup/config/launch_params.yaml`中的`odom2camera`各项参数
+      > 需要注意，即便机械组能够从图纸上直接获取精准参数，但在实际安装时还是会存在一些难以避免的偏差，需要手动在车上测量出实际数据，或者在文件里一点点调出较为理想的参数
+  3. 更改`/src/rm_vision/rm_vision_bringup/config/node_params.yaml`:
+     - `exposure_time`
+         
+  4. foxglove里拉出Parameters列表和`/tracker/info.position.x`的Plot图，小幅度调整`serial_driver.timestamp_offset`使得plot图折线在一段时间内上下限基本可以用水平平行线限定，即保证波动幅度在很小范围内
+  5. ---------- 阶段测试 ----------
+      
+  6. 
+  
+
+# ----- RECORD VIDEO 1 -> 1:55:00 -----
 
 ---
 
