@@ -291,7 +291,7 @@ ros2 run	//该命令执行的是install文件夹中的文件，故需要更新�
   - 君佬代码中对于装甲板的识别和处理是分开写的，两者没有任何耦合。因此，在电控没有发送姿态数据的情况下，视觉完全可以对识别算法的正确性进行验证
     - 识别部分应用opencv，到处理部分后只需要接收识别部分计算出的x,y,z等参数，然后全部都在odom惯性系下进行处理，不需要考虑前面部分是如何运行的
   - 坐标系转换
-   ![](./pic/01.png)
+   ![transform](https://github.com/QHaoooLG/Robomaster_QIQI/blob/master/pic/01.png)
      - 机器人状态从`gimbal_description.urdf.xacro`中读取坐标系转换数据
   - `tf`时间戳
     - `Latency`是识别到图像后到处理话题发布间的延迟
