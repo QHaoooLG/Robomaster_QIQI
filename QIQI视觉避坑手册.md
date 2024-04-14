@@ -190,7 +190,7 @@ ros2 run	//该命令执行的是install文件夹中的文件，故需要更新�
 
 - 计算`src/rm_vision_main/rm_vision_bringup/config/laungh_params.yaml`中的`r_xyz_factor`:
   观察`/tracker/measurement.x`的Plot图，得出x的范围值，如$[-1.88, -1.96]$，
-  取差值$0.08$，
+  取差值 $0.08$ ，
   $0.08/4=0.02$，取x轴差值除以4
   $0.02^2=0.0004=4e-4$，将除后结果取平方
   $0.0004/1.88=2e-4量级 $  平方结果再去比x轴范围值中的最小值，最后取结果的量级
