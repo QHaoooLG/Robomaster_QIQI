@@ -122,7 +122,8 @@ ros2 run	//该命令执行的是install文件夹中的文件，故需要更新�
 - Windows ping Ubuntu
   1. 先设置好windows和ubuntu(主板)的静态IPv4地址，然后网线连接
   2. windows打开`Windows Defender 防火墙`，在`入站规则`中的`名称`一栏下找`文件和打印机共享(回显请求 - ICMPv4-In)`，`组`为`文件和打印机共享`，共有两个，分别将这两个规则启用即可
-  ![transform](https://github.com/QHaoooLG/Robomaster_QIQI/blob/master/pic/02.png)
+    ![transform](https://github.com/QHaoooLG/Robomaster_QIQI/blob/master/pic/02.png)
+
 
 
 ---
@@ -313,8 +314,8 @@ ros2 run	//该命令执行的是install文件夹中的文件，故需要更新�
     - Q -> process
       R -> measurement
       Q,R均为矩阵
-      Q相当于概率论中的协方差，可以理解为运动噪声。例如：A->B，通过A运动方程预测B的运动方程，Q可以表示为预测结果与实际结果的匹配程度。状态量有n个，Q就是n*n矩阵
-      R为观测量的噪声，卡尔曼滤波器更新时需要通过预测量和观测量来完成。观测量有m个，R就是m*m矩阵
+      Q相当于概率论中的协方差，可以理解为运动噪声。例如：A->B，通过A运动方程预测B的运动方程，Q可以表示为预测结果与实际结果的匹配程度。状态量有n个，Q就是 $n*n$ 矩阵
+      R为观测量的噪声，卡尔曼滤波器更新时需要通过预测量和观测量来完成。观测量有m个，R就是 $m*m$ 矩阵
     - `tracker/target`即发给电控的数据包
     - `processor/target.radius_1`为当前识别到的装甲板距离整车中心的距离，也可以理解为半径，来回跳变是因为该数据不断地从滤波器中存入拿出，可能会有两个稳定值是因为四块装甲板可能会有两个半径值
     - 
@@ -329,7 +330,6 @@ ros2 run	//该命令执行的是install文件夹中的文件，故需要更新�
 ---
 
 ## 23赛季调车(与电控联调)
-> 马哥时期调参方法，22级感觉不咋稳
 
 ##### 整车进行实战训练前的一次完整自瞄调试流程
 
