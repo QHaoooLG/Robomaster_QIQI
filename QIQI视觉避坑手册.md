@@ -161,6 +161,44 @@
       ```shell
       sudo reboot
       ```
+7. (可选操作)若配置完成后，通过网线进行vnc连接出现黑屏只有鼠标的情况，则需要在ubuntu端额外配置虚拟服务器
+   1. 安装虚拟现实其所需的软件包
+      ```shell
+      sudo apt-get install xserver-xorg-cor-hwe-18.04
+      sudo apt-get install xserver-xorg-video-dummy-hwe-18.04 --fix-missing
+      ```
+    2. 创建配置文件
+      ```shell
+      sudo vi /usr/share/X11/xorg.conf.d/xorg.conf
+      ```
+      粘贴以下内容
+      ```conf
+      Section "Monitor"
+        Identifier "Monitor0"
+        HorizSync 28.0-80.0
+        VertRefresh 48.0-75.0
+        # https://arachnoid.com/modelines/
+        # 1920x1080 @ 60.00 Hz (GTF) hsync: 67.08 kHz; pclk: 172.80 MHz
+        Modeline "1920x1080_60.00" 172.80 1920 2040 2248 2576 1080 1081 1084 1118 -HSync +Vsync
+      EndSection
+      Section "Device"
+        Identifier "Card0"
+        Driver "dummy"
+        VideoRam 256000
+      EndSection
+      Section "Screen"
+        DefaultDepth 24
+        Identifier "Screen0"
+        Device "Card0"
+        Monitor "Monitor0"
+        SubSection "Display"
+          Depth 24
+          Modes "1920x1080_60.00"
+        EndSubSection
+      EndSection
+      ```
+      保存后退出
+      然后重启系统进行远程连接测试
 
 ---
 
