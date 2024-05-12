@@ -86,18 +86,81 @@
     sudo apt install ros-humble-foxglove-bridge
     ```
 
-- ##### VNC连接配置
+- ### VNC远程控制环境配置
 
 > 准备一根网线，2m左右最优
 
 1. 链接双方设置静态ip
-2. ubuntu端在`设置`中的`信息`查看窗口系统是否为`X11`，若为`X11`则可以直接进行`x11vnc`的安装与配置；若为`Wayland`则需要先在系统中关掉`Wayland: enable`，然后重启再次查看，变为`X11`后再进行后续操作
-    > 在`Wayland`改`X11`这一步中，部分工控完成该操作后重启可能会出现系统无法正常开机的现象，这就表明该工控无法修改为`X11`窗口系统，也就不能配置`x11vnc`远程操作环境，需要放弃该远程操控方案
-3. 安装`x11vnc`
+2. ubuntu端在`设置`中的`信息`查看窗口系统是否为`X11`，若为`X11`则可以直接进行`x11vnc`的安装与配置；若为`Wayland`则需要先在系统中关掉`WaylandEnable`，然后重启再次查看，变为`X11`后再进行后续操作
+  具体操作如下：
+    1. 打开/etc/gdm3/custom.conf文件编辑，可以用nano或vim等，
     ```shell
-    sudo apt install x11vnc
+    sudo nano /etc/gdm3/custom.conf
     ```
-
+    2. 将`#WaylandEnable=false`这一行前面的`#`去掉，取消该行注释，最后保存并关闭文件
+    3. 重启GDM3
+    ```shell
+    sudo systemctl restart gdm3
+    ```
+    > 在`Wayland`改`X11`这一步中，部分工控完成该操作后重启可能会出现系统无法正常开机的现象，这就表明该工控无法修改为`X11`窗口系统，也就不能配置`x11vnc`远程操作环境，需要放弃该远程操控方案
+3. 安装`x11vnc`及网络工具包
+    ```shell
+    sudo apt install x11vnc net-tools -y
+    ```
+4. 设置远程连接密码
+    ```shell 
+    x11vnc -storepasswd
+    ```
+    输入上述命令后会提示自行设置密码，密码输入时是不可见的，需要盲打，建议设为`123`
+    确认密码后，会打印提示信息
+    ```shell
+    Write password to /home/qiqi/.vnc/passwd? [y]/n 
+    ```
+    同意后就会将密码文件存储在所示目录下的文件里，后续启动x11vnc服务时直接使用该密码文件即可
+5. 常用x11vnc启动指令
+   ```shell
+   x11vnc -auth guess -forever -loop -noxdamage -repeat -rfbauth /home/qiqi/.vnc/passwd -rfbport 5900 -shared 
+   ```
+   `-rfbauth <密码文件路径>`  设置vnc服务远程连接密码
+   `-rfbport <启动端口号>`  设置vnc服务远程连接所用端口
+6. 设置vnc服务开机启动
+   前提为取消开机输入密码这一操作，改为直接进入桌面
+   1. 创建vnc配置文件
+      ```shell
+      cd /etc/init
+      sudo gedit x11vnc.conf
+      ```
+      文件内容如下
+      ```shell
+      exec /usr/bin/x11vnc -auth guess -forever -loop -noxdamage -repeat -rfbauth /home/qiqi/.vnc/passwd -rfbport 5900 -shared
+      ```
+    2. 尝试启动vnc服务进行测试
+      ```shell
+      source /etc/init/x11vnc.conf 
+      ```
+    3. 设置开机自启动
+      在某一路径下(最好是自瞄工作空间里)
+      ```shell
+      gedit x11vnc.sh
+      ```
+      内容如下：
+      ```shell
+      #!/bin/bash
+      source /etc/init/x11vnc.conf
+      ```
+      移动文件并添加权限
+      ```shell
+      sudo mv x11vnc.sh /etc/init.d/
+      sudo chmod 777 /etc/init.d/x11vnc.sh
+      ```
+      然后将其添加到启动项中，即ubuntu开始菜单栏自带的`启动应用程序`，重点在`命令栏`，需要输入
+      ```shell
+      bash /etc/init.d/x11vnc.sh
+      ```
+    4. 重启测试
+      ```shell
+      sudo reboot
+      ```
 
 ---
 
